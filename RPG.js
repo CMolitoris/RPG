@@ -15,22 +15,40 @@ class character {
         }
     }
 
-    helmSplitter(enemy) {
+    helmSplitter(character) {
         console.log("A devastating blow!");
-        let dmg = this.attPower + 30;
-        if(dmg >= enemy.health) {
-            enemy.dead = true;
-            return enemy;
-        }
-        enemy.health - dmg;
-        return enemy;
-
+        let dmg = character.attPower + 30;
+        return dmg;
     }
-    seisToss() {
-
+    seisToss(character) {
+        console.log("A powerful toss!");
+        let dmg = character.attPower + 20;
+        return dmg;
     }
-    earthShat() {
-
+    earthShat(character) {
+        console.log("The enemy trembles at your strength!");
+        let dmg = character.attPower + 40;
+        return dmg;
+    }
+    slash(character) {
+        console.log("SHINNNGGGGG");
+        let dmg = character.attPower + 10;
+        return dmg;
+    }
+    tackle(character) {
+        console.log("Takedown!");
+        let dmg = character.attPower + 20;
+        return dmg;
+    }
+    maul(character) {
+        console.log("An onslaught!");
+        let dmg = character.attPower + 20;
+        return dmg;
+    }
+    thrash(character) {
+        console.log("The enemy attacks with furry!");
+        let dmg = character.attPower + 15;
+        return dmg;
     }
 
 
