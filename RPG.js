@@ -81,7 +81,34 @@ let turnCounter;
 
 
 
+function RunGame() {
+    let confirm = false;
+    let hero = new character(prompt("What would you like to name your hero?"),"HERO");
+    let choice;
+    while(!confirm) {
+        choice = prompt("Are you sure? (Y/N)").toUpperCase();
+        if(choice==="Y") {
+            confirm = true;
+        }    
+    }
+    console.log("System: No audio device connected.\n Narrator: Many years ago there was a time" 
+    + " when the world was ruled by the Olympians. One of the greatest was named, Hercules, the"
+    + " strongest of those on Mount Olympus. Many times he showed his prowess in battle. \n"
+    + "CINEMATIC CUTSCENE:"
+    )
 
+
+
+
+
+
+
+
+
+
+
+
+}
 
 
 
@@ -128,7 +155,7 @@ function selectAttack(character, choice) {
     }
 }
 
-function attacked(character,enemy,damage) {
+function attacked(enemy,damage) {
     let dmg = damage;
             if(enemy.health <= dmg) {
                 enemy.dead = true;
@@ -150,7 +177,7 @@ function attack(character, enemy) {
         doesNotHaveAttack = character.attackSet.length<choice;
     }
     let damage = selectAttack(character,choice);
-    return attacked(character,enemy,damage);
+    return attacked(enemy,damage);
         
     
 }
