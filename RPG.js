@@ -1,7 +1,7 @@
 "use strict"
 
 class character {
-    constructor(name,health,attPower,classType) {
+    constructor(name,classType) {
         this.name = name;
         this.stunned = false;
         this.dead = false;
@@ -101,16 +101,56 @@ function randNum(max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-function attack(character) {
-    for(let i=0;i<character.attackSet.lenght;i++) {
-        console.log((i+1) + ": " + character.attackSet[i] + "\n");
-    }
-    let choice = prompt("Which attack would you like to use?");  //"Helm-Splitter","Siesmic Toss","Earthshatter"
+function selectAttack(character, choice) {
     if(character.classType==="HERO") {
         switch(choice) {
             case "1":
-            character.helmSplitter
+               return character.helmSplitter(character);
+            case "2":
+                return character.seisToss(character);
+            case "3":
+                return character.earthShat(character);         
+        }
+    } else if(character.classType==="ALLY") {
+        switch(choice) {
+            case "1":
+                return character.slash(character);
+            case "2":
+                return character.tackle(character);    
+        }
+    } else {
+        switch(choice) {
+            case "1":
+                return character.maul(character);
+            case "2":
+                return character.thrash(character);    
         }
     }
+}
+
+function attacked(character,enemy,damage) {
+    let dmg = damage;
+            if(enemy.health <= dmg) {
+                enemy.dead = true;
+                console.log(enemy.name + " has been defeated!");
+                return enemy;
+            }
+            enemy.health - dmg;
+            return enemy;
+}
+
+function attack(character, enemy) {
+    for(let i=0;i<character.attackSet.length;i++) {
+        console.log((i+1) + ": " + character.attackSet[i] + "\n");
+    }
+    let choice = prompt("Which attack would you like to use?");
+    let doesNotHaveAttack = character.attackSet.length<choice;
+    while(doesNotHaveAttack) {
+        let choice = prompt("Which attack would you like to use?");
+        doesNotHaveAttack = character.attackSet.length<choice;
+    }
+    let damage = selectAttack(character,choice);
+    return attacked(character,enemy,damage);
+        
     
 }
