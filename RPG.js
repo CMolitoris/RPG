@@ -74,6 +74,7 @@ class character {
 
 }
 
+let turnCounter = 0;
 RunGame();
 
 
@@ -84,7 +85,7 @@ RunGame();
 
 function RunGame() {
     let confirm = false;
-    let hero = new character(prompt("What would you like to name your hero?"),"HERO");
+    let hero = new character(prompt("What would you like to name you hero?"),"HERO");
     let choice;
     while(!confirm) {
         choice = prompt("Are you sure? (Y/N)").toUpperCase();
@@ -100,9 +101,52 @@ function RunGame() {
     + "CINEMATIC CUTSCENE: \nBandit Exclaims: 'Your time has come son of Zues!' *3 enemies enter"
     + " field of view*"
     );
-    //fight one
+    //-- Fight One --//
     let enemyFightOne = generateEnemyNPC(3);
-
+    let battleFinished = false;
+    while(!battleFinished) {
+        let choice = prompt("Who would you like to attack?");
+        while(choice>enemyFightOne.length) {
+            choice = console.prompt("Invalid choice, please enter a legal input. (1-" 
+            + enemyFightOne.length+")");
+        }
+        for(let i=0;i<enemyFightOne.length;i++) {
+            console.log((i+1) + ": " + enemyFightOne[i].name);
+        }
+        switch(choice) {
+            case "1":
+                if(enemyFightOne[choice-1].dead===true) {
+                    console.log(enemyFightOne[choice-1].name + " is already eliminated!");
+                    break;
+                }
+                enemyFightOne[choice-1] = attack(hero,enemyFightOne[choice-1]);
+                break;
+            case "2":
+                if(enemyFightOne[choice-1].dead===true) {
+                    console.log(enemyFightOne[choice-1].name + " is already eliminated!");
+                    break;
+                }
+                enemyFightOne[choice-1] = attack(hero,enemyFightOne[choice-1]);
+                break;
+            case "3":
+                if(enemyFightOne[choice-1].dead===true) {
+                    console.log(enemyFightOne[choice-1].name + " is already eliminated!");
+                    break;
+                }
+                enemyFightOne[choice-1] = attack(hero,enemyFightOne[choice-1]);
+                break;        
+        }
+        let deadCheck = 0;
+        for(let i=0;i<enemyFightOne.length;i++) {
+            if(enemyFightOne[i].dead===true) {
+                deadCheck++;
+            }
+        }
+        if(deadCheck===enemyFightOne.length) {
+            battleFinished = true;
+        }
+        
+    }
 
 
 
