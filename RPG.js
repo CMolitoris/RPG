@@ -1,5 +1,13 @@
 "use strict"
 
+class stageObject {
+    constructor() {
+        this.stageOneEnemies = [new character("Bandit Leader","ENEMY"),new character("Bandit Apprentice","ENEMY"),new character("Bandit Apprentice","ENEMY")];
+        this.stageTwoEnemies = [new character("Nemean Lion","ENEMY"),new character("Nine-Headed Hydra","ENEMY")];
+        this.stageThreeEnemies = [new character("Cerberus","ENEMY")];
+    }
+}
+
 class character {
     static instance=0;
     constructor(name,classType) {
@@ -8,17 +16,21 @@ class character {
         this.dead = false;
         this.classType = classType;
         if(classType==="HERO") {
-            this.health = 200;
+            this.health = 500;
             this.attPower = 40;
             this.attackSet = ["Helm-Splitter","Siesmic Toss","Earthshatter"];
         } else if(classType ==="ALLY") {
             this.health = 100;
             this.attPower = 15;
             this.attackSet = ["Slash","Tackle"];
-        } else {
+        } else if(classType==="ENEMY") {
             this.instance++;
             this.health = 100;
             this.attPower = 20;
+            this.attackSet = ["Maul","Thrash"];
+        } else if(classType==="BOSS") {
+            this.health = 250;
+            this.attPower = 40;
             this.attackSet = ["Maul","Thrash"];
         }
     }
@@ -57,13 +69,13 @@ class character {
         console.log("An onslaught!");
         let dmg = character.attPower + 12;
         let chance = randNum(100);
-        let counter=0;
+        let counter=1;
         while(chance<20) {
             counter++;
             dmg += 12;
             chance = randNum(100);
         }
-        console.log("The enemy attacked " + counter + " times!");
+        console.log("The enemy attacked " + counter + " time(s)!");
         return dmg;
     }
     thrash(character) {
@@ -84,9 +96,11 @@ RunGame();
 
 
 function RunGame() {
-    let confirm = false;
+    let gameOver = false;
+    let stageOb = new stageObject();
     let hero = new character(prompt("What would you like to name you hero?"),"HERO");
     let choice;
+    let confirm = false;
     while(!confirm) {
         choice = prompt("Are you sure? (Y/N)").toUpperCase();
         if(choice==="Y") {
@@ -102,69 +116,77 @@ function RunGame() {
     + " field of view*"
     );
     //-- Fight One --//
-    let enemyFightOne = generateEnemyNPC(3);
+    hero = battle(hero,stageOb.stageOneEnemies);
+    console.log("\n\nText leading to stage 2..");
+    hero = battle(hero,stageOb.stageTwoEnemies);
+    console.log("\n\nText leading to final stage...");
+    hero = battle(hero,stageOb.stageThreeEnemies);
+    console.log("\n\nClosing statements");
+
+
+
+
+}   
+
+
+function battle(hero,stageEnemies) {
     let battleFinished = false;
     let turnCounter = 1;
-    while(!battleFinished) {
-        for(let i=0;i<enemyFightOne.length;i++) {
-            console.log((i+1) + ": " + enemyFightOne[i].name);
+    while(!battleFinished && !gameOver) {
+        for(let i=0;i<stageEnemies.length;i++) {
+            console.log((i+1) + ": " + stageEnemies[i].name);
         }
         let choice = prompt("Who would you like to attack?");
-        while(choice>enemyFightOne.length) {
+        while(choice>stageEnemies.length) {
             choice = console.prompt("Invalid choice, please enter a legal input. (1-" 
-            + enemyFightOne.length+")");
+            + stageEnemies.length+")");
         }
         switch(choice) {
             case "1":
-                if(enemyFightOne[choice-1].dead===true) {
-                    console.log(enemyFightOne[choice-1].name + " is already eliminated!");
+                if(stageEnemies[choice-1].dead===true) {
+                    console.log(stageEnemies[choice-1].name + " is already eliminated!");
                     break;
                 }
-                enemyFightOne[choice-1] = attack(hero,enemyFightOne[choice-1]);
+                stageEnemies[choice-1] = attack(hero,stageEnemies[choice-1]);
                 break;
             case "2":
-                if(enemyFightOne[choice-1].dead===true) {
-                    console.log(enemyFightOne[choice-1].name + " is already eliminated!");
+                if(stageEnemies[choice-1].dead===true) {
+                    console.log(stageEnemies[choice-1].name + " is already eliminated!");
                     break;
                 }
-                enemyFightOne[choice-1] = attack(hero,enemyFightOne[choice-1]);
+                stageEnemies[choice-1] = attack(hero,stageEnemies[choice-1]);
                 break;
             case "3":
-                if(enemyFightOne[choice-1].dead===true) {
-                    console.log(enemyFightOne[choice-1].name + " is already eliminated!");
+                if(stageEnemies[choice-1].dead===true) {
+                    console.log(stageEnemies[choice-1].name + " is already eliminated!");
                     break;
                 }
-                enemyFightOne[choice-1] = attack(hero,enemyFightOne[choice-1]);
+                stageEnemies[choice-1] = attack(hero,stageEnemies[choice-1]);
                 break;        
         }
-        let deadCheck = 0;
-        for(let i=0;i<enemyFightOne.length;i++) {
-            if(enemyFightOne[i].dead===true) {
-                deadCheck++;
+
+        if(hero.dead===true) {
+            console.log("GAME OVER");
+            gameOver = true;
+        }
+
+        for(let i=0;i<stageEnemies.length;i++) {
+            if(stageEnemies[i].dead!==true) {
+                console.log("The enemy is attacking!");
+                hero = attack(stageEnemies[i],hero);
+            } if(stageEnemies[i].dead==true) {
+                stageEnemies.splice(stageEnemies[i],1);
             }
         }
-        if(deadCheck===enemyFightOne.length) {
-            battleFinished = true;
-        }
-        for(let i=0;i<enemyFightOne.length;i++) {
-            if(enemyFightOne[i].dead!==true) {
-                hero = attack(enemyFightOne[i],hero);
-            }
-        }
+        console.log("\nTurn " + turnCounter + " has ended.");
         turnCounter++;
-        console.log("Turn " + turnCounter + " has begun!");
+        if(stageEnemies.length===0) {
+            battleFinished = true;
+            console.log("The battle has ended!");
+            return hero;
+        }
 
     }
-
-
-
-
-
-
-
-
-
-
 }
 
 function generateEnemyNPC(numGenerated) {
@@ -179,8 +201,8 @@ function generateEnemyNPC(numGenerated) {
 
 
 
-function randNum(aMax) {
-    let min = 0;
+function randNum(aMin=0,aMax) {
+    let min = aMin;
     let max = aMax;
     return Math.floor(Math.random() * (max - min) + min);
 }
@@ -220,23 +242,25 @@ function attacked(enemy,damage) {
                 return enemy;
             }
             enemy.health -= dmg;
-            console.log(enemy.name + " has " + enemy.health + " remaining.");
+            console.log(enemy.name + " has " + enemy.health + " health remaining.");
             return enemy;
 }
 
 function attack(character, enemy) {
-    if(character.classType==="HERO") {
-        for(let i=0;i<character.attackSet.length;i++) {
-            console.log((i+1) + ": " + character.attackSet[i] + "\n");
-        }
+    if(character.classType!=="HERO") {
+        let choice = randNum(1,3);
+        let damage = selectAttack(character,choice.toString());
+        return attacked(enemy,damage);
+    } 
+    console.log("\nAttacks:");
+    for(let i=0;i<character.attackSet.length;i++) {
+        console.log((i+1) + ": " + character.attackSet[i] + "\n");
+    }
+    let choice = prompt("Which attack would you like to use?");
+    let doesNotHaveAttack = character.attackSet.length<choice;
+    while(doesNotHaveAttack) {
         let choice = prompt("Which attack would you like to use?");
-        let doesNotHaveAttack = character.attackSet.length<choice;
-        while(doesNotHaveAttack) {
-            let choice = prompt("Which attack would you like to use?");
-            doesNotHaveAttack = character.attackSet.length<choice;
-        }
-    } else if(character.classType==="ENEMY") {
-        let choice = randNum(3);
+        doesNotHaveAttack = character.attackSet.length<choice;
     }    
     let damage = selectAttack(character,choice);
     return attacked(enemy,damage);
