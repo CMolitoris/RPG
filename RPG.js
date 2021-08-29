@@ -4,7 +4,7 @@ class stageObject {
     constructor() {
         this.stageOneEnemies = [new character("Bandit Leader","ENEMY"),new character("Bandit Apprentice","ENEMY"),new character("Bandit Apprentice","ENEMY")];
         this.stageTwoEnemies = [new character("Nemean Lion","ENEMY"),new character("Nine-Headed Hydra","ENEMY")];
-        this.stageThreeEnemies = [new character("Cerberus","ENEMY")];
+        this.stageThreeEnemies = [new character("Cerberus","BOSS")];
     }
 }
 
@@ -39,7 +39,7 @@ class character {
         console.log("A devastating blow!");
         let dmg = character.attPower + 20;
         let chance = randNum(100);
-        if(chance<20) {
+        if(chance<33) {
             dmg *= 1.5;
             console.log("Critical hit!")
         }
@@ -70,7 +70,7 @@ class character {
         let dmg = character.attPower + 12;
         let chance = randNum(100);
         let counter=1;
-        while(chance<20) {
+        while(chance<25) {
             counter++;
             dmg += 12;
             chance = randNum(100);
@@ -87,16 +87,10 @@ class character {
 
 }
 
+//-- Main Function --//
 RunGame();
 
-
-
-
-
-
-
 function RunGame() {
-    let gameOver = false;
     let stageOb = new stageObject();
     let hero = new character(prompt("What would you like to name you hero?"),"HERO");
     let choice;
@@ -112,24 +106,31 @@ function RunGame() {
     console.log("System: No audio device connected.\nNarrator: Many years ago there was a time" 
     + " when the world was ruled by the Olympians. One of the greatest was named, Hercules, the"
     + " strongest of those on Mount Olympus. Many times he showed his prowess in battle. \n"
-    + "CINEMATIC CUTSCENE: \nBandit Exclaims: 'Your time has come son of Zues!' *3 enemies enter"
+    + "\nCINEMATIC CUTSCENE: \nBandit Exclaims: 'Your time has come son of Zues!' *3 enemies enter"
     + " field of view*"
     );
     //-- Fight One --//
     hero = battle(hero,stageOb.stageOneEnemies);
-    console.log("\n\nText leading to stage 2..");
-    hero = battle(hero,stageOb.stageTwoEnemies);
-    console.log("\n\nText leading to final stage...");
+    if(hero!==true) {
+        console.log("\n\nText leading to stage 2..");
+        hero = battle(hero,stageOb.stageTwoEnemies);
+    } else {
+        return;
+    }
+    if(hero!==true) {
+        console.log("\n\nText leading to final stage...");
     hero = battle(hero,stageOb.stageThreeEnemies);
-    console.log("\n\nClosing statements");
-
-
-
-
+    } else {
+        return;
+    }
+    console.log("\n\nCongratulations on your victory " + hero.name
+    + "! You have defeated countless foes and returned peace to the realm."
+    );
 }   
 
 
 function battle(hero,stageEnemies) {
+    let gameOver = false;
     let battleFinished = false;
     let turnCounter = 1;
     while(!battleFinished && !gameOver) {
@@ -168,11 +169,12 @@ function battle(hero,stageEnemies) {
         if(hero.dead===true) {
             console.log("GAME OVER");
             gameOver = true;
+            return gameOver;
         }
 
         for(let i=0;i<stageEnemies.length;i++) {
             if(stageEnemies[i].dead!==true) {
-                console.log("The enemy is attacking!");
+                console.log("\nThe enemy is attacking!");
                 hero = attack(stageEnemies[i],hero);
             } if(stageEnemies[i].dead==true) {
                 stageEnemies.splice(stageEnemies[i],1);
