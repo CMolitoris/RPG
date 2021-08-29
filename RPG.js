@@ -1,6 +1,7 @@
 "use strict"
 
 class character {
+    static instance=0;
     constructor(name,classType) {
         this.name = name;
         this.stunned = false;
@@ -14,6 +15,7 @@ class character {
             this.attPower = 15;
             this.attackSet = ["Slash","Tackle"];
         } else {
+            this.instance++;
             this.health = 100;
             this.attPower = 20;
             this.attackSet = ["Maul","Thrash"];
@@ -26,6 +28,7 @@ class character {
         let chance = randNum(100);
         if(chance<10) {
             dmg *= 1.5;
+            console.log("Critical hit!")
         }
         return dmg;
     }
@@ -71,9 +74,7 @@ class character {
 
 }
 
-let turnCounter;
-
-
+RunGame();
 
 
 
@@ -89,14 +90,18 @@ function RunGame() {
         choice = prompt("Are you sure? (Y/N)").toUpperCase();
         if(choice==="Y") {
             confirm = true;
-        }    
+        } else {
+            hero = new character(prompt("What would you like to name your hero?"),"HERO");
+        }
     }
-    console.log("System: No audio device connected.\n Narrator: Many years ago there was a time" 
+    console.log("System: No audio device connected.\nNarrator: Many years ago there was a time" 
     + " when the world was ruled by the Olympians. One of the greatest was named, Hercules, the"
     + " strongest of those on Mount Olympus. Many times he showed his prowess in battle. \n"
-    + "CINEMATIC CUTSCENE:"
-    )
-
+    + "CINEMATIC CUTSCENE: \nBandit Exclaims: 'Your time has come son of Zues!' *3 enemies enter"
+    + " field of view*"
+    );
+    //fight one
+    let enemyFightOne = generateEnemyNPC(3);
 
 
 
@@ -110,21 +115,21 @@ function RunGame() {
 
 }
 
+function generateEnemyNPC(numGenerated) {
+    let newEnemys = [];
+    for(let i=0;i<numGenerated;i++) {
+        let newEnemy = new character("Enemy"+i,"ENEMY");
+        newEnemys.push(newEnemy);
+        console.log(newEnemys[i].name + " has entered the battlefield!");
+    }
+    return newEnemys;
+}
 
 
 
-
-
-
-
-
-
-
-
-
-function randNum(max) {
+function randNum(aMax) {
     let min = 0;
-    let max = max;
+    let max = aMax;
     return Math.floor(Math.random() * (max - min) + min);
 }
 
