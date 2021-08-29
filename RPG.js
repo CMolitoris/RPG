@@ -6,6 +6,7 @@ class character {
         this.name = name;
         this.stunned = false;
         this.dead = false;
+        this.classType = classType;
         if(classType==="HERO") {
             this.health = 200;
             this.attPower = 40;
@@ -26,7 +27,7 @@ class character {
         console.log("A devastating blow!");
         let dmg = character.attPower + 20;
         let chance = randNum(100);
-        if(chance<10) {
+        if(chance<20) {
             dmg *= 1.5;
             console.log("Critical hit!")
         }
@@ -56,7 +57,7 @@ class character {
         console.log("An onslaught!");
         let dmg = character.attPower + 12;
         let chance = randNum(100);
-        let counter;
+        let counter=0;
         while(chance<20) {
             counter++;
             dmg += 12;
@@ -74,7 +75,6 @@ class character {
 
 }
 
-let turnCounter = 0;
 RunGame();
 
 
@@ -104,14 +104,15 @@ function RunGame() {
     //-- Fight One --//
     let enemyFightOne = generateEnemyNPC(3);
     let battleFinished = false;
+    let turnCounter = 1;
     while(!battleFinished) {
+        for(let i=0;i<enemyFightOne.length;i++) {
+            console.log((i+1) + ": " + enemyFightOne[i].name);
+        }
         let choice = prompt("Who would you like to attack?");
         while(choice>enemyFightOne.length) {
             choice = console.prompt("Invalid choice, please enter a legal input. (1-" 
             + enemyFightOne.length+")");
-        }
-        for(let i=0;i<enemyFightOne.length;i++) {
-            console.log((i+1) + ": " + enemyFightOne[i].name);
         }
         switch(choice) {
             case "1":
@@ -145,7 +146,14 @@ function RunGame() {
         if(deadCheck===enemyFightOne.length) {
             battleFinished = true;
         }
-        
+        for(let i=0;i<enemyFightOne.length;i++) {
+            if(enemyFightOne[i].dead!==true) {
+                hero = attack(enemyFightOne[i],hero);
+            }
+        }
+        turnCounter++;
+        console.log("Turn " + turnCounter + " has begun!");
+
     }
 
 
@@ -162,7 +170,7 @@ function RunGame() {
 function generateEnemyNPC(numGenerated) {
     let newEnemys = [];
     for(let i=0;i<numGenerated;i++) {
-        let newEnemy = new character("Enemy"+i,"ENEMY");
+        let newEnemy = new character("Enemy"+(i+1),"ENEMY");
         newEnemys.push(newEnemy);
         console.log(newEnemys[i].name + " has entered the battlefield!");
     }
@@ -211,20 +219,25 @@ function attacked(enemy,damage) {
                 console.log(enemy.name + " has been defeated!");
                 return enemy;
             }
-            enemy.health - dmg;
+            enemy.health -= dmg;
+            console.log(enemy.name + " has " + enemy.health + " remaining.");
             return enemy;
 }
 
 function attack(character, enemy) {
-    for(let i=0;i<character.attackSet.length;i++) {
-        console.log((i+1) + ": " + character.attackSet[i] + "\n");
-    }
-    let choice = prompt("Which attack would you like to use?");
-    let doesNotHaveAttack = character.attackSet.length<choice;
-    while(doesNotHaveAttack) {
+    if(character.classType==="HERO") {
+        for(let i=0;i<character.attackSet.length;i++) {
+            console.log((i+1) + ": " + character.attackSet[i] + "\n");
+        }
         let choice = prompt("Which attack would you like to use?");
-        doesNotHaveAttack = character.attackSet.length<choice;
-    }
+        let doesNotHaveAttack = character.attackSet.length<choice;
+        while(doesNotHaveAttack) {
+            let choice = prompt("Which attack would you like to use?");
+            doesNotHaveAttack = character.attackSet.length<choice;
+        }
+    } else if(character.classType==="ENEMY") {
+        let choice = randNum(3);
+    }    
     let damage = selectAttack(character,choice);
     return attacked(enemy,damage);
         
